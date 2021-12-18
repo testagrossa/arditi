@@ -5,32 +5,44 @@ import org.scalacheck.Gen.{const, oneOf}
 import org.scalacheck.{Arbitrary, Gen, Prop, Test}
 import org.scalacheck.rng.Seed
 import org.scalacheck.Prop.*
+import quickcheck.utils.{ArbitraryHeaps, CorrectProperties}
 
 class QuickCheckSuite extends munit.FunSuite:
 
+  test("correct implementation. (10pts)") {
+    checkSuccess()
+  }
+
   test("Bogus (1) binomial heap does not satisfy properties. (10pts)") {
-    checkBogus(quickcheck.test.Bogus1BinomialHeap())(_.insertMinAndGetMin, _.deleteAllProducesSortedList, _.meldingHeaps)
+    checkBogus(quickcheck.Bogus1BinomialHeap())(_.insertMinAndGetMin, _.deleteAllProducesSortedList, _.meldingHeaps)
   }
 
   test("Bogus (2) binomial heap does not satisfy properties. (10pts)") {
-    checkBogus(quickcheck.test.Bogus2BinomialHeap())(_.meldingHeaps)
+    checkBogus(quickcheck.Bogus2BinomialHeap())(_.meldingHeaps)
   }
 
   test("Bogus (3) binomial heap does not satisfy properties. (10pts)") {
-    checkBogus(quickcheck.test.Bogus3BinomialHeap())(_.meldingSmallHeaps, _.meldingHeaps)
+    checkBogus(quickcheck.Bogus3BinomialHeap())(_.meldingSmallHeaps, _.meldingHeaps)
   }
 
   test("Bogus (4) binomial heap does not satisfy properties. (10pts)") {
-    checkBogus(quickcheck.test.Bogus4BinomialHeap())(_.meldingHeaps)
+    checkBogus(quickcheck.Bogus4BinomialHeap())(_.meldingHeaps)
   }
 
   test("Bogus (5) binomial heap does not satisfy properties. (10pts)") {
-    checkBogus(quickcheck.test.Bogus5BinomialHeap())(_.deleteAllProducesSortedList, _.meldingSmallHeaps, _.meldingHeaps)
+    checkBogus(quickcheck.Bogus5BinomialHeap())(_.deleteAllProducesSortedList, _.meldingSmallHeaps, _.meldingHeaps)
   }
 
   import scala.concurrent.duration.DurationInt
   override val munitTimeout = 10.seconds
   val testParameters = Test.Parameters.default
+
+  def checkSuccess(): Unit =
+    // Check that the properties pass on the correct heap implementation.
+    // We don’t perform this check as a separate MUnit test, because if
+    // it failed it would only decrease the score for a small percentage.
+    checkPropertiesOnCorrectHeap()
+  end checkSuccess
 
   def checkBogus(heapInterface: HeapInterface)(
       shouldFail: HeapProperties => (String, Prop)*
@@ -48,7 +60,7 @@ class QuickCheckSuite extends munit.FunSuite:
   def checkPropertiesOnCorrectHeap(): Unit =
     // All the props should pass on the correct implementation
     val propertiesOnCorrectHeap =
-      val heap = new HeapProperties(quickcheck.test.BinomialHeap()) with ArbitraryHeaps
+      val heap = new HeapProperties(quickcheck.BinomialHeap()) with ArbitraryHeaps
       new org.scalacheck.Properties("HeapProperties") {
         def register(labelledProp: (String, Prop)): Unit =
           property(labelledProp(0)) = labelledProp(1)
