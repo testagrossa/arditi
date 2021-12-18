@@ -9,10 +9,6 @@ import quickcheck.utils.{ArbitraryHeaps, CorrectProperties}
 
 class QuickCheckSuite extends munit.FunSuite:
 
-  test("correct implementation. (10pts)") {
-    checkSuccess()
-  }
-
   test("Bogus (1) binomial heap does not satisfy properties. (10pts)") {
     checkBogus(quickcheck.Bogus1BinomialHeap())(_.insertMinAndGetMin, _.deleteAllProducesSortedList, _.meldingHeaps)
   }
@@ -36,13 +32,6 @@ class QuickCheckSuite extends munit.FunSuite:
   import scala.concurrent.duration.DurationInt
   override val munitTimeout = 10.seconds
   val testParameters = Test.Parameters.default
-
-  def checkSuccess(): Unit =
-    // Check that the properties pass on the correct heap implementation.
-    // We don’t perform this check as a separate MUnit test, because if
-    // it failed it would only decrease the score for a small percentage.
-    checkPropertiesOnCorrectHeap()
-  end checkSuccess
 
   def checkBogus(heapInterface: HeapInterface)(
       shouldFail: HeapProperties => (String, Prop)*

@@ -98,10 +98,8 @@ class Bogus1BinomialHeap extends BinomialHeap:
 class Bogus2BinomialHeap extends BinomialHeap:
   override protected def link(node1: Node, node2: Node): Node = // node1.rank == node2.rank
     if node1.value <= node2.value then
-      // Node(node1.value, node1.rank + 1, node1 :: node2.children)
       Node(node1.value, node1.rank + 1, node2 :: node2.children)
     else
-      // Node(node2.value, node2.rank + 1, node1 :: node1.children)
       Node(node2.value, node2.rank + 1, node1 :: node2.children)
 
 class Bogus3BinomialHeap extends BinomialHeap:
